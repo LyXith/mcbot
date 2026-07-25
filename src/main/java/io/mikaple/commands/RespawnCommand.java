@@ -8,7 +8,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.Serverbound
 public class RespawnCommand {
     public static Command respawnCommand = new Command()
             .literal("respawn")
-            .executes((session,_) -> {
+            .executes((session,_,_) -> {
                 session.send(new ServerboundClientCommandPacket(ClientCommand.PERFORM_RESPAWN));
             });
 }

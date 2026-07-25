@@ -9,11 +9,13 @@ import java.util.List;
 public class HelpCommand {
     public static Command helpCommand = new Command()
             .literal("help")
-            .executes((_,_) -> {
+            .executes((_,_,_) -> {
                 List<Command> commands = CommandManager.getAllCommands();
+                String msg = "";
                 for (Command command :commands) {
-                    ChatUtils.sendChat(command.getName());
+                    msg = msg.concat(command.getName() + ", ");
                 }
+                ChatUtils.sendChat(msg);
             });
 
 }

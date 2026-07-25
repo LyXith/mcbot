@@ -1,6 +1,7 @@
 package io.mikaple;
 
 import io.mikaple.command.CommandManager;
+import io.mikaple.utils.LogUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -11,6 +12,7 @@ public class ChatProcesser {
     public static void processChat(Component input) {
         System.out.println(MessageProcesser.toAnsi(input));
         String plainString = MessageProcesser.toPlainText(input);
+        LogUtils.logMessage(plainString);
         if (plainString.startsWith("[玩家]") || plainString.startsWith("[地皮]")) {
             Component nameNode = input.children().getFirst().children().get(1);
             HoverEvent<?> hover = nameNode.hoverEvent();

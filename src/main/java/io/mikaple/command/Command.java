@@ -10,9 +10,10 @@ import java.util.List;
 public class Command {
     public List<Argument> arguments = new ArrayList<>();
     private Task task;
+    public CommandContext context;
     @FunctionalInterface
     public interface Task {
-        void run(Session session, List<Argument> arguments);
+        void run(Session session, List<Argument> arguments,CommandContext context);
     }
 
     private String name;
@@ -36,6 +37,6 @@ public class Command {
     }
 
     public void execute() {
-        this.task.run(Main.session, arguments);
+        this.task.run(Main.session, arguments,context);
     }
 }

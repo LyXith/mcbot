@@ -14,7 +14,7 @@ public class MidiCommand {
     public static Command midiCommand = new Command().literal("midi")
             .argument(new StringArgument())
             .argument(new StringArgument())
-            .executes((session,args) -> {
+            .executes((session,args,_) -> {
                 Argument arg1 = args.getFirst();
                 if (arg1 instanceof StringArgument strArg) {
                     switch (strArg.string) {

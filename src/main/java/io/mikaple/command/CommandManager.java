@@ -30,10 +30,11 @@ public class CommandManager {
         String main = commandParts[0];
         for (Command command : commands) {
             if (command.getName().equals(main)) {
+                List<Argument> arguments = new ArrayList<>();
                 for (Argument argument : command.arguments) {
                     switch (argument) {
                         case IntegerArgument intArg -> intArg.integer = 0;
-                        case StringArgument strArg -> strArg.string = null;
+                        case StringArgument strArg -> strArg.string = "";
                         default -> {}
                     }
                 }
@@ -59,6 +60,7 @@ public class CommandManager {
                     }
                 }
                 if (!parseFailed) {
+                    command.context = new CommandContext(player);
                     command.execute();
                 }
                 break;
