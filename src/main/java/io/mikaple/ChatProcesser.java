@@ -11,7 +11,7 @@ public class ChatProcesser {
     public static void processChat(Component input) {
         System.out.println(MessageProcesser.toAnsi(input));
         String plainString = MessageProcesser.toPlainText(input);
-        if (plainString.startsWith("[玩家]")) {
+        if (plainString.startsWith("[玩家]") || plainString.startsWith("[地皮]")) {
             Component nameNode = input.children().getFirst().children().get(1);
             HoverEvent<?> hover = nameNode.hoverEvent();
             Component hoverComp;

@@ -1,8 +1,6 @@
 package io.mikaple;
 
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCommandSuggestionsPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
 
@@ -12,6 +10,8 @@ import java.util.*;
 
 
 public class MidiProcesser {
+    private static Thread playThread;
+    private static volatile boolean playing = false;
 
     private static final String[] instruments = {
             "harp",              // channel 0
@@ -90,9 +90,33 @@ public class MidiProcesser {
 
 
 
+    public static void play(File file, Session session) {
 
+        stop(); // 防止重复播放
 
-    public static void play(File file, Session session)
+        playing = true;
+
+        playThread = new Thread(() -> {
+
+            try {
+                playInternal(file, session);
+
+            } catch (InterruptedException e) {
+                // 正常停止，不打印
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            } finally {
+                playing = false;
+            }
+
+        });
+
+        playThread.start();
+    }
+
+    public static void playInternal(File file, Session session)
             throws Exception {
 
         int transactionId = 0;
@@ -228,6 +252,9 @@ public class MidiProcesser {
         for(MidiEventData e : events){
 
 
+            if(!playing){
+                return;
+            }
 
             long deltaTick =
                     e.tick-lastTick;
@@ -256,8 +283,22 @@ public class MidiProcesser {
 
 
 
-            if(sleep>0){
-                Thread.sleep(sleep);
+            if(sleep > 0){
+
+                long remain = sleep;
+
+                while(remain > 0 && playing){
+
+                    long start = System.currentTimeMillis();
+
+                    Thread.sleep(Math.min(remain,100));
+
+                    remain -= System.currentTimeMillis()-start;
+                }
+            }
+
+            if(!playing){
+                return;
             }
 
 
@@ -334,6 +375,18 @@ public class MidiProcesser {
 
 
         return note;
+    }
+
+    public static synchronized void stop(){
+
+        playing = false;
+
+        if(playThread != null){
+
+            playThread.interrupt();
+
+            playThread = null;
+        }
     }
 
 }

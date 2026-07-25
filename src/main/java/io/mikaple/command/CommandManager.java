@@ -1,17 +1,18 @@
 package io.mikaple.command;
 
 import io.mikaple.Main;
+import io.mikaple.command.arguments.Argument;
+import io.mikaple.command.arguments.IntegerArgument;
+import io.mikaple.command.arguments.StringArgument;
+import io.mikaple.utils.ChatUtils;
 import org.geysermc.mcprotocollib.network.ClientSession;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandManager {
     private static List<Command> commands = new ArrayList<>();
-
-    public static void init(ClientSession session) {
-        Command.setSession(session);
-    }
 
     public static void register(Command command) {
         if (Main.session == null) {
@@ -25,13 +26,81 @@ public class CommandManager {
     }
 
     public static void processCommand(String input,String player) {
-        String[] commandParts = input.split(" ");
+        String[] commandParts = splitPreserveQuotes(input);
         String main = commandParts[0];
         for (Command command : commands) {
             if (command.getName().equals(main)) {
-                command.execute(null);
+                String[] args = Arrays.stream(commandParts)
+                        .skip(1)
+                        .toArray(String[]::new);
+                int i = 0;
+                for (String arg : args) {
+                    try {
+                        Argument argument = command.arguments.get(i);
+                        switch (argument) {
+                            case IntegerArgument intArg:
+                                intArg.integer = Integer.parseInt(arg);
+                                break;
+                            case StringArgument strArg:
+                                strArg.string = arg;
+                            default:
+                                break;
+                        }
+                        i++;
+                    } catch (IndexOutOfBoundsException ignore) {
+                        ChatUtils.sendChat("wrong command");
+                    }
+                }
+                command.execute();
                 break;
             }
         }
     }
+
+    public static String[] splitPreserveQuotes(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return new String[0];
+        }
+
+        List<String> parts = new ArrayList<>();
+        StringBuilder currentPart = new StringBuilder();
+        boolean inSingleQuotes = false;
+        boolean inDoubleQuotes = false;
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+
+            // 处理单引号
+            if (c == '\'' && !inDoubleQuotes) {
+                inSingleQuotes = !inSingleQuotes;
+                continue; // 不保留引号
+            }
+
+            // 处理双引号
+            if (c == '"' && !inSingleQuotes) {
+                inDoubleQuotes = !inDoubleQuotes;
+                continue; // 不保留引号
+            }
+
+            // 处理空格分隔
+            if (c == ' ' && !inSingleQuotes && !inDoubleQuotes) {
+                if (currentPart.length() > 0) {
+                    parts.add(currentPart.toString());
+                    currentPart.setLength(0);
+                }
+                continue;
+            }
+
+            // 普通字符
+            currentPart.append(c);
+        }
+
+        // 添加最后一部分
+        if (currentPart.length() > 0) {
+            parts.add(currentPart.toString());
+        }
+
+        return parts.toArray(new String[0]);
+    }
+
 }

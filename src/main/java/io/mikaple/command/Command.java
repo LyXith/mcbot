@@ -1,5 +1,6 @@
 package io.mikaple.command;
 
+import io.mikaple.Main;
 import io.mikaple.command.arguments.Argument;
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.Session;
@@ -8,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Command {
-    private static ClientSession session;
-    private List<Argument> arguments = new ArrayList<>();
+    public List<Argument> arguments = new ArrayList<>();
     private Task task;
     @FunctionalInterface
     public interface Task {
@@ -32,17 +32,11 @@ public class Command {
         return this;
     }
 
-    public static void setSession(ClientSession client) {
-        session = client;
-    }
-
-
-
     public String getName() {
         return this.name;
     }
 
-    public void execute(List<Object> args) {
-        this.task.run(session, arguments);
+    public void execute() {
+        this.task.run(Main.session, arguments);
     }
 }

@@ -1,5 +1,6 @@
 package io.mikaple;
 
+import io.mikaple.command.Command;
 import io.mikaple.command.CommandManager;
 import io.mikaple.utils.Utils;
 import org.geysermc.mcprotocollib.network.ClientSession;
@@ -22,10 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
+import static io.mikaple.commands.CmdCommand.cmdCommand;
 import static io.mikaple.commands.HelpCommand.*;
+import static io.mikaple.commands.MidiCommand.midiCommand;
+import static io.mikaple.commands.RespawnCommand.respawnCommand;
 import static io.mikaple.commands.SendCommand.sendCommand;
 
 
@@ -33,7 +36,11 @@ public class Main {
     public static final boolean debug = false;
     public static ClientSession session;
     public static Logger log = LoggerFactory.getLogger("bot");
+    public static File logFolder = new File("logs");
     static void main() {
+        if (!logFolder.exists()) {
+            logFolder.mkdir();
+        }
         CountDownLatch latch = new CountDownLatch(1);
 
         ClientSession client = ClientNetworkSessionFactory.factory()
@@ -82,26 +89,11 @@ public class Main {
         });
 
         client.connect();
-        CommandManager.init(session);
         CommandManager.register(helpCommand);
         CommandManager.register(sendCommand);
-
-//        String path = "/home/mikaple/IdeaProjects/mcbot/realms.mid";
-//        File file = new File(path);
-//        log.info("文件路径: {}", file.getAbsolutePath());
-//        log.info("文件是否存在: {}", file.exists());
-//        log.info("文件是否可读: {}", file.canRead());
-//
-//        CompletableFuture.runAsync(() -> {
-//            try {
-//                // 等待一小段时间确保登录完成
-//                Thread.sleep(5000);
-//                MidiProcesser.play(file, session);
-//            } catch (Exception e) {
-//                log.error("MIDI播放失败: ", e);
-//            }
-//        });
-
+        CommandManager.register(cmdCommand);
+        CommandManager.register(respawnCommand);
+        CommandManager.register(midiCommand);
 
         try {
             latch.await();  // 等待直到断开连接
