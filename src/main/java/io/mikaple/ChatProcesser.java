@@ -1,0 +1,42 @@
+package io.mikaple;
+
+import io.mikaple.command.CommandManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+
+import java.util.Objects;
+
+public class ChatProcesser {
+    public static void processChat(Component input) {
+        System.out.println(MessageProcesser.toAnsi(input));
+        String plainString = MessageProcesser.toPlainText(input);
+        if (plainString.startsWith("[玩家]")) {
+            Component nameNode = input.children().getFirst().children().get(1);
+            HoverEvent<?> hover = nameNode.hoverEvent();
+            Component hoverComp;
+            if (hover != null) {
+                hoverComp = (Component) hover.value();
+                String playerName = textOf(hoverComp.children().get(1));
+                String chatMsg = textOf(input.children().get(1));
+                if (chatMsg.startsWith("!!")) {
+                    String command = chatMsg.substring(2);
+                    System.out.println(command);
+                    CommandManager.processCommand(command,playerName);
+                }
+            }
+        }
+
+    }
+
+    private static String textOf(Component c) {
+        if (c instanceof TextComponent tc && !tc.content().isEmpty()) {
+            return tc.content();
+        }
+        for (Component child : c.children()) {
+            String t = textOf(child);
+            if (!t.isEmpty()) return t;
+        }
+        return "";
+    }
+}
