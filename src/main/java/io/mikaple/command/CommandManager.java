@@ -30,28 +30,37 @@ public class CommandManager {
         String main = commandParts[0];
         for (Command command : commands) {
             if (command.getName().equals(main)) {
+                for (Argument argument : command.arguments) {
+                    switch (argument) {
+                        case IntegerArgument intArg -> intArg.integer = 0;
+                        case StringArgument strArg -> strArg.string = null;
+                        default -> {}
+                    }
+                }
+
                 String[] args = Arrays.stream(commandParts)
                         .skip(1)
                         .toArray(String[]::new);
+                boolean parseFailed = false;
                 int i = 0;
                 for (String arg : args) {
                     try {
                         Argument argument = command.arguments.get(i);
                         switch (argument) {
-                            case IntegerArgument intArg:
-                                intArg.integer = Integer.parseInt(arg);
-                                break;
-                            case StringArgument strArg:
-                                strArg.string = arg;
-                            default:
-                                break;
+                            case IntegerArgument intArg -> intArg.integer = Integer.parseInt(arg);
+                            case StringArgument strArg -> strArg.string = arg;
+                            default -> {}
                         }
                         i++;
                     } catch (IndexOutOfBoundsException ignore) {
                         ChatUtils.sendChat("wrong command");
+                        parseFailed = true;
+                        break;
                     }
                 }
-                command.execute();
+                if (!parseFailed) {
+                    command.execute();
+                }
                 break;
             }
         }

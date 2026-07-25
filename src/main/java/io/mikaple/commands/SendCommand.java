@@ -10,7 +10,7 @@ public class SendCommand {
             .argument(new StringArgument())
             .executes((_,arguments) -> {
                 if (arguments.getFirst() instanceof StringArgument strArg) {
-                    ChatUtils.sendChat(strArg.string);
+                    if (strArg.string != null) ChatUtils.sendChat(strArg.string);
                 }
             });
 }

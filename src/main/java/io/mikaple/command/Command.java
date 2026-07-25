@@ -2,7 +2,6 @@ package io.mikaple.command;
 
 import io.mikaple.Main;
 import io.mikaple.command.arguments.Argument;
-import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.Session;
 
 import java.util.ArrayList;
