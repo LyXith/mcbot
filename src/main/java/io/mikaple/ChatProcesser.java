@@ -4,6 +4,7 @@ import io.mikaple.command.CommandManager;
 import io.mikaple.utils.LogUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 
 import java.util.Objects;
@@ -13,7 +14,7 @@ public class ChatProcesser {
         System.out.println(MessageProcesser.toAnsi(input));
         String plainString = MessageProcesser.toPlainText(input);
         LogUtils.logMessage(plainString);
-        if (plainString.startsWith("[玩家]") || plainString.startsWith("[地皮]")) {
+        if (plainString.startsWith("[玩家]") || plainString.startsWith("[地皮]") || plainString.startsWith("[世界]")) {
             Component nameNode = input.children().getFirst().children().get(1);
             HoverEvent<?> hover = nameNode.hoverEvent();
             Component hoverComp;

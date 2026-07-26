@@ -1,0 +1,18 @@
+package io.mikaple.commands;
+
+import io.mikaple.command.Command;
+import io.mikaple.command.arguments.Argument;
+import io.mikaple.command.arguments.StringArgument;
+import io.mikaple.utils.GameUtils;
+
+public class InteractCommand {
+    public static Command interactCommand = new Command()
+            .literal("interact")
+            .argument(new StringArgument())
+            .executes((session,arguments,_) -> {
+                Argument arg = arguments.getFirst();
+                if (arg instanceof StringArgument strArg) {
+                    GameUtils.interactPlayer(strArg.string,session);
+                }
+            });
+}

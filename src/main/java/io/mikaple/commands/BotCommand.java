@@ -7,6 +7,7 @@ import io.mikaple.command.CommandManager;
 import io.mikaple.command.arguments.Argument;
 import io.mikaple.command.arguments.StringArgument;
 import io.mikaple.utils.ChatUtils;
+import io.mikaple.utils.ClientBuilder;
 import org.geysermc.mcprotocollib.network.ClientSession;
 
 import java.util.HashMap;
@@ -44,9 +45,9 @@ public class BotCommand {
 
     private static void spawnBot(String name) {
         if (botConnectStatus.get(name) == null || !botConnectStatus.get(name)) {
-            ClientSession botSession = Main.createBot(name);
+            ClientSession botSession = ClientBuilder.createBot(name);
             botMap.put(name, botSession);
-            Main.runBot(botSession, "bot_passwd1234",true,false);
+            ClientBuilder.runBot(botSession, "bot_passwd1234",true,false);
             botConnectStatus.put(name, true);
         }
     }

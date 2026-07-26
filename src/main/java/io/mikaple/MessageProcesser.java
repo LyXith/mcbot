@@ -2,12 +2,14 @@ package io.mikaple;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MessageProcesser {
@@ -65,7 +67,6 @@ public class MessageProcesser {
     private static void render(Component component, StringBuilder sb, TextColor inherited) {
         Style style = component.style();
         TextColor color = style.color() != null ? style.color() : inherited;
-
         StringBuilder prefix = new StringBuilder();
         if (color != null) {
             String ansi = ANSI_COLORS.get(color.value());
@@ -76,9 +77,33 @@ public class MessageProcesser {
         if (style.hasDecoration(TextDecoration.UNDERLINED)) prefix.append(UNDERLINE);
         if (style.hasDecoration(TextDecoration.STRIKETHROUGH)) prefix.append(STRIKETHROUGH);
 
-        String text = extractText(component);
-        if (!text.isEmpty()) {
-            sb.append(prefix).append(text).append(prefix.length() > 0 ? RESET : "");
+        if (component instanceof TranslatableComponent) {
+            // 特殊解析: key="%s" 的翻译组件,按占位符顺序把 arguments 递归渲染进去
+            TranslatableComponent tc = (TranslatableComponent) component;
+            String key = tc.key();
+            List<TranslationArgument> args = tc.arguments();
+
+            int argIndex = 0;
+            int i = 0;
+            while (i < key.length()) {
+                if (key.startsWith("%s", i) && argIndex < args.size()) {
+                    // 参数部分:递归渲染，让参数自身的颜色/悬浮样式生效
+                    render(args.get(argIndex).asComponent(), sb, color);
+                    argIndex++;
+                    i += 2;
+                } else {
+                    // 普通字符部分：套用当前 prefix
+                    if (prefix.length() > 0) sb.append(prefix);
+                    sb.append(key.charAt(i));
+                    if (prefix.length() > 0) sb.append(RESET);
+                    i++;
+                }
+            }
+        } else {
+            String text = extractText(component);
+            if (!text.isEmpty()) {
+                sb.append(prefix).append(text).append(prefix.length() > 0 ? RESET : "");
+            }
         }
 
         for (Component child : component.children()) {
@@ -101,7 +126,35 @@ public class MessageProcesser {
     }
 
     private static void collectPlain(Component component, StringBuilder sb) {
-        sb.append(extractText(component));
+        if (component instanceof TranslatableComponent) {
+            // 特殊解析:TranslatableComponent 的 key 当作格式串,
+            // arguments 里的每个参数递归转纯文本后依次替换 %s
+            TranslatableComponent tc = (TranslatableComponent) component;
+            String key = tc.key();
+            List<TranslationArgument> args = tc.arguments();
+
+            StringBuilder result = new StringBuilder();
+            int argIndex = 0;
+            int i = 0;
+            while (i < key.length()) {
+                if (key.startsWith("%s", i) && argIndex < args.size()) {
+                    StringBuilder argSb = new StringBuilder();
+                    collectPlain(args.get(argIndex).asComponent(), argSb);
+                    result.append(argSb);
+                    argIndex++;
+                    i += 2;
+                } else {
+                    result.append(key.charAt(i));
+                    i++;
+                }
+            }
+            sb.append(result);
+        } else {
+            sb.append(extractText(component));
+        }
+
+        // 无论哪种情况,子组件都要继续遍历(TranslatableComponent 一般没有 children,
+        // 但保留这行以兼容有 children 的情况)
         for (Component child : component.children()) {
             collectPlain(child, sb);
         }

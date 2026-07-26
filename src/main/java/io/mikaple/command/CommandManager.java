@@ -56,7 +56,7 @@ public class CommandManager {
                             }
                             i++;
                         } catch (IndexOutOfBoundsException ignore) {
-                            ChatUtils.sendChat("wrong command");
+                            ChatUtils.sendChat("wrong command",session);
                             parseFailed = true;
                             break;
                         }
@@ -69,7 +69,6 @@ public class CommandManager {
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            return;
         }
     }
 
