@@ -19,7 +19,7 @@ public class MidiCommand {
                 if (arg1 instanceof StringArgument strArg) {
                     switch (strArg.string) {
                         case "list":
-                            ChatUtils.sendChat(Arrays.toString(new File("midi").list()));
+                            ChatUtils.sendChat(Arrays.toString(new File("midi").list()),session);
                             break;
                         case "play":
                             Argument arg2 = args.get(1);
@@ -28,10 +28,10 @@ public class MidiCommand {
                                 if (midi.exists()) {
                                     MidiProcesser.play(midi,session);
                                 } else {
-                                    ChatUtils.sendChat("Play failed.");
+                                    ChatUtils.sendChat("Play failed.",session);
                                 }
                             } else {
-                                ChatUtils.sendChat("Play failed.");
+                                ChatUtils.sendChat("Play failed.",session);
                             }
                             break;
                         case "stop":

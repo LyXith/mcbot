@@ -15,15 +15,15 @@ public class PingServerCommand {
     public static Command pingCommand = new Command()
             .literal("ping")
             .argument(new StringArgument())
-            .executes((_,arguments,_) -> {
+            .executes((session,arguments,_) -> {
                 Argument arg = arguments.getFirst();
                 if (arg instanceof StringArgument strArg) {
                     SocketAddress address = parse(strArg.string);
                     CompletableFuture.runAsync(() -> {
                         HashMap<String,String> serverStatus = PingServer.ping(address);
-                        ChatUtils.sendChat("version: "+serverStatus.get("version"));
-                        ChatUtils.sendChat("player: "+serverStatus.get("playerNumber"));
-                        ChatUtils.sendChat("player: " + serverStatus.get("playerList"));
+                        ChatUtils.sendChat("version: "+serverStatus.get("version"),session);
+                        ChatUtils.sendChat("player: "+serverStatus.get("playerNumber"),session);
+                        ChatUtils.sendChat("player: " + serverStatus.get("playerList"),session);
                     });
                 }
             });

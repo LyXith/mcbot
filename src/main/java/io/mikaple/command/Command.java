@@ -1,8 +1,7 @@
 package io.mikaple.command;
 
-import io.mikaple.Main;
 import io.mikaple.command.arguments.Argument;
-import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.ClientSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ public class Command {
     public CommandContext context;
     @FunctionalInterface
     public interface Task {
-        void run(Session session, List<Argument> arguments,CommandContext context);
+        void run(ClientSession session, List<Argument> arguments,CommandContext context);
     }
 
     private String name;
@@ -36,7 +35,7 @@ public class Command {
         return this.name;
     }
 
-    public void execute() {
-        this.task.run(Main.session, arguments,context);
+    public void execute(ClientSession session) {
+        this.task.run(session, arguments,context);
     }
 }

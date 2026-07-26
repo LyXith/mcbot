@@ -10,7 +10,8 @@ import java.util.BitSet;
 import static io.mikaple.Main.session;
 
 public class ChatUtils {
-    public static void sendChat(String string) {
+
+    public static void sendChat(String string,ClientSession session) {
         session.send(new ServerboundChatPacket(
                 string,
                 Instant.now().toEpochMilli(),
@@ -22,7 +23,23 @@ public class ChatUtils {
         ));
     }
 
-    public static void sendCommand(String command) {
+    public static void sendCommand(String command,ClientSession session) {
         session.send(new ServerboundChatCommandPacket(command));
+    }
+
+    public static void sendMsg(String msg,String player,ClientSession session) {
+        sendCommand("msg " + player + " " + msg,session);
+    }
+
+    public static void sendChat(String string) {
+        sendChat(string,session);
+    }
+
+    public static void sendCommand(String command) {
+        sendCommand(command,session);
+    }
+
+    public static void sendMsg(String msg,String player) {
+        sendMsg(msg,player,session);
     }
 }

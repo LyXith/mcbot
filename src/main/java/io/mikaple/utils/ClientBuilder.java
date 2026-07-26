@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 import static io.mikaple.Main.*;
+import static io.mikaple.commands.BotCommand.botConnectStatus;
+import static io.mikaple.commands.BotCommand.botMap;
 
 public class ClientBuilder {
     public static void buildClient(ClientSession client,String passwd, CountDownLatch latch,boolean autoRegister, boolean main) {
@@ -37,9 +39,9 @@ public class ClientBuilder {
                             true,
                             ParticleStatus.ALL));
                     if (autoRegister) {
-                        ChatUtils.sendCommand("register "+passwd+" "+passwd);
+                        ChatUtils.sendCommand("register "+passwd+" "+passwd,client);
                     }
-                    ChatUtils.sendCommand("login "+passwd);
+                    ChatUtils.sendCommand("login "+passwd,client);
                 } else if (packet instanceof ClientboundSystemChatPacket chatPacket) {
                     if (debug) {
                         log.info("Received: {}", chatPacket.getContent());
@@ -61,6 +63,10 @@ public class ClientBuilder {
                 log.info("Bot disconnected: {}", event.getReason());
                 if (event.getCause() != null) {
                     log.error("断开原因: ", event.getCause());
+                }
+                if (!main) {
+                    botMap.remove(client.getPacketProtocol().getProfile().getName());
+                    botConnectStatus.remove(client.getPacketProtocol().getProfile().getName());
                 }
                 latch.countDown();
             }

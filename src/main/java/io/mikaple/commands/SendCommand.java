@@ -8,9 +8,9 @@ public class SendCommand {
     public static Command sendCommand = new Command()
             .literal("send")
             .argument(new StringArgument())
-            .executes((_,arguments,_) -> {
+            .executes((session,arguments,_) -> {
                 if (arguments.getFirst() instanceof StringArgument strArg) {
-                    if (strArg.string != null) ChatUtils.sendChat(strArg.string);
+                    if (strArg.string != null) ChatUtils.sendChat(strArg.string,session);
                 }
             });
 }

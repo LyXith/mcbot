@@ -1,30 +1,14 @@
 package io.mikaple;
 
-import io.mikaple.command.Command;
 import io.mikaple.command.CommandManager;
-import io.mikaple.utils.ChatUtils;
 import io.mikaple.utils.ClientBuilder;
-import io.mikaple.utils.Utils;
 import org.geysermc.mcprotocollib.network.ClientSession;
-import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
-import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
-import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.factory.ClientNetworkSessionFactory;
-import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.player.HandPreference;
-import org.geysermc.mcprotocollib.protocol.data.game.setting.ChatVisibility;
-import org.geysermc.mcprotocollib.protocol.data.game.setting.ParticleStatus;
-import org.geysermc.mcprotocollib.protocol.data.game.setting.SkinPart;
-import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 import static io.mikaple.commands.BotCommand.botCommand;

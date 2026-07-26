@@ -25,46 +25,51 @@ public class CommandManager {
         return commands;
     }
 
-    public static void processCommand(String input,String player) {
+    public static void processCommand(String input,String player,ClientSession session) {
         String[] commandParts = splitPreserveQuotes(input);
-        String main = commandParts[0];
-        for (Command command : commands) {
-            if (command.getName().equals(main)) {
-                List<Argument> arguments = new ArrayList<>();
-                for (Argument argument : command.arguments) {
-                    switch (argument) {
-                        case IntegerArgument intArg -> intArg.integer = 0;
-                        case StringArgument strArg -> strArg.string = "";
-                        default -> {}
-                    }
-                }
-
-                String[] args = Arrays.stream(commandParts)
-                        .skip(1)
-                        .toArray(String[]::new);
-                boolean parseFailed = false;
-                int i = 0;
-                for (String arg : args) {
-                    try {
-                        Argument argument = command.arguments.get(i);
+        try {
+            String main = commandParts[0];
+            for (Command command : commands) {
+                if (command.getName().equals(main)) {
+                    for (Argument argument : command.arguments) {
                         switch (argument) {
-                            case IntegerArgument intArg -> intArg.integer = Integer.parseInt(arg);
-                            case StringArgument strArg -> strArg.string = arg;
-                            default -> {}
+                            case IntegerArgument intArg -> intArg.integer = 0;
+                            case StringArgument strArg -> strArg.string = "";
+                            default -> {
+                            }
                         }
-                        i++;
-                    } catch (IndexOutOfBoundsException ignore) {
-                        ChatUtils.sendChat("wrong command");
-                        parseFailed = true;
-                        break;
                     }
+
+                    String[] args = Arrays.stream(commandParts)
+                            .skip(1)
+                            .toArray(String[]::new);
+                    boolean parseFailed = false;
+                    int i = 0;
+                    for (String arg : args) {
+                        try {
+                            Argument argument = command.arguments.get(i);
+                            switch (argument) {
+                                case IntegerArgument intArg -> intArg.integer = Integer.parseInt(arg);
+                                case StringArgument strArg -> strArg.string = arg;
+                                default -> {
+                                }
+                            }
+                            i++;
+                        } catch (IndexOutOfBoundsException ignore) {
+                            ChatUtils.sendChat("wrong command");
+                            parseFailed = true;
+                            break;
+                        }
+                    }
+                    if (!parseFailed) {
+                        command.context = new CommandContext(player);
+                        command.execute(session);
+                    }
+                    break;
                 }
-                if (!parseFailed) {
-                    command.context = new CommandContext(player);
-                    command.execute();
-                }
-                break;
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return;
         }
     }
 

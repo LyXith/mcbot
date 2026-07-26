@@ -24,7 +24,7 @@ public class ChatProcesser {
                 if (chatMsg.startsWith("!!")) {
                     String command = chatMsg.substring(2);
                     System.out.println(command);
-                    CommandManager.processCommand(command,playerName);
+                    CommandManager.processCommand(command,playerName,Main.session);
                 }
             }
         }

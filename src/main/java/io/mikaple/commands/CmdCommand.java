@@ -8,9 +8,9 @@ public class CmdCommand {
     public static Command cmdCommand = new Command()
             .literal("cmd")
             .argument(new StringArgument())
-            .executes((_,arguments,_) -> {
+            .executes((session,arguments,_) -> {
                 if (arguments.getFirst() instanceof StringArgument strArg) {
-                    ChatUtils.sendCommand(strArg.string);
+                    ChatUtils.sendCommand(strArg.string,session);
                 }
             });
 }
