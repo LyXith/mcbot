@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
+import static io.mikaple.commands.BotCommand.botCommand;
 import static io.mikaple.commands.CmdCommand.cmdCommand;
 import static io.mikaple.commands.HelpCommand.*;
 import static io.mikaple.commands.MidiCommand.midiCommand;
@@ -62,19 +63,28 @@ public class Main {
     }
 
     public static void createAndRun(String name,String passwd) {
-        CountDownLatch latch = new CountDownLatch(1);
-        ClientSession client = ClientNetworkSessionFactory.factory()
-                .setAddress("mc.weeaxe.cn")
-                .setProtocol(new MinecraftProtocol(name))
-                .create();
-        ClientBuilder.buildClient(client,passwd,latch);
-        client.connect();
+        ClientSession client = createBot(name);
+        CountDownLatch latch = runBot(client,passwd,false,true);
         registerCommand();
         try {
             latch.await();  // 等待直到断开连接
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public static ClientSession createBot(String name) {
+        return ClientNetworkSessionFactory.factory()
+                .setAddress("mc.weeaxe.cn")
+                .setProtocol(new MinecraftProtocol(name))
+                .create();
+    }
+
+    public static CountDownLatch runBot(ClientSession client,String passwd,boolean autoRegister,boolean main) {
+        CountDownLatch latch = new CountDownLatch(1);
+        ClientBuilder.buildClient(client,passwd,latch,autoRegister,main);
+        client.connect();
+        return latch;
     }
 
     public static void registerCommand() {
@@ -86,6 +96,7 @@ public class Main {
         CommandManager.register(midiCommand);
         CommandManager.register(whoamiCommand);
         CommandManager.register(pingCommand);
+        CommandManager.register(botCommand);
         registered = true;
     }
 }

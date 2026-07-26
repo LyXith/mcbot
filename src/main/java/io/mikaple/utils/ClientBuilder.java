@@ -21,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import static io.mikaple.Main.*;
 
 public class ClientBuilder {
-    public static void buildClient(ClientSession client,String passwd, CountDownLatch latch) {
+    public static void buildClient(ClientSession client,String passwd, CountDownLatch latch,boolean autoRegister, boolean main) {
         client.addListener(new SessionAdapter() {
             @Override
             public void packetReceived(Session session, Packet packet) {
@@ -36,12 +36,15 @@ public class ClientBuilder {
                             false,
                             true,
                             ParticleStatus.ALL));
+                    if (autoRegister) {
+                        ChatUtils.sendCommand("register "+passwd+" "+passwd);
+                    }
                     ChatUtils.sendCommand("login "+passwd);
                 } else if (packet instanceof ClientboundSystemChatPacket chatPacket) {
                     if (debug) {
                         log.info("Received: {}", chatPacket.getContent());
                     }
-                    ChatProcesser.processChat(chatPacket.getContent());
+                    if (main) ChatProcesser.processChat(chatPacket.getContent());
                 }
             }
         });
@@ -49,7 +52,7 @@ public class ClientBuilder {
         client.addListener(new SessionAdapter() {
             @Override
             public void connected(ConnectedEvent event) {
-                session = (ClientSession) event.getSession();
+                if (main) session = (ClientSession) event.getSession();
                 log.info("Bot connected to server");
             }
 
