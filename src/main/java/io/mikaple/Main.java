@@ -11,11 +11,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static io.mikaple.Settings.*;
 import static io.mikaple.utils.LogUtils.*;
 
 
 public class Main {
-    public static final boolean debug = false;
+
     public static ClientSession session;
     public static boolean registered = false;
     public static List<EntityData> entities = new CopyOnWriteArrayList<>();
@@ -25,7 +26,7 @@ public class Main {
             logFolder.mkdir();
         }
         while (true) {
-            ClientBuilder.createAndRun("zakoloop","zakocraft143");
+            ClientBuilder.createAndRun(name,password);
             Object lock = new Object();
             synchronized (lock) {
                 try {

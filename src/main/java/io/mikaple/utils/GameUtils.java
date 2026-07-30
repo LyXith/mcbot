@@ -7,6 +7,7 @@ import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundAttackPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundInteractPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
 
@@ -17,6 +18,10 @@ import static io.mikaple.Main.profileMap;
 public class GameUtils {
     public static void interact(int entityId, Vector3d location, boolean isSneaking, ClientSession session) {
         session.send(new ServerboundInteractPacket(entityId,location,isSneaking));
+    }
+
+    public static void attack(int entityId, ClientSession session) {
+        session.send(new ServerboundAttackPacket(entityId));
     }
 
     public static void interactPlayer(String name,ClientSession session) {
@@ -30,6 +35,17 @@ public class GameUtils {
                         0
                 );
                 interact(player.entity.getEntityId(),location,false,session);
+                break;
+            }
+        }
+    }
+
+    public static void attackPlayer(String name,ClientSession session) {
+        List<EntityData> players = EntityData.getPlayers();
+        for (EntityData player : players) {
+            GameProfile profile = profileMap.get(player.entity.getUuid());
+            if (profile != null && profile.getName().equals(name)) {
+                attack(player.entity.getEntityId(),session);
                 break;
             }
         }

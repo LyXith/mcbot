@@ -54,4 +54,12 @@ public class EntityData {
         }
         return players;
     }
+
+    public static List<EntityData> getTypedEntities(EntityType type) {
+        List<EntityData> typedEntities = new ArrayList<>();
+        for (EntityData entityData : entities) {
+            if (entityData.entity.getType().equals(type)) typedEntities.add(entityData);
+        }
+        return typedEntities;
+    }
 }

@@ -1,13 +1,12 @@
-package io.mikaple;
+package io.mikaple.processer;
 
+import io.mikaple.Main;
+import io.mikaple.Settings;
 import io.mikaple.command.CommandManager;
 import io.mikaple.utils.LogUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.HoverEvent;
-
-import java.util.Objects;
 
 public class ChatProcesser {
     public static void processChat(Component input) {
@@ -24,8 +23,9 @@ public class ChatProcesser {
                 String chatMsg = textOf(input.children().get(1));
                 if (chatMsg.startsWith("!!")) {
                     String command = chatMsg.substring(2);
-                    System.out.println(command);
-                    CommandManager.processCommand(command,playerName,Main.session);
+                    if (Settings.isPublic || Settings.owners.contains(playerName) || Settings.trustedPlayers.contains(playerName)) {
+                        CommandManager.processCommand(command, playerName, Main.session);
+                    }
                 }
             }
         }

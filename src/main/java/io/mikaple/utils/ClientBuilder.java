@@ -1,7 +1,7 @@
 package io.mikaple.utils;
 
-import io.mikaple.ChatProcesser;
-import io.mikaple.command.Command;
+import io.mikaple.Settings;
+import io.mikaple.processer.ChatProcesser;
 import io.mikaple.command.CommandManager;
 import io.mikaple.data.EntityData;
 import org.geysermc.mcprotocollib.network.ClientSession;
@@ -25,7 +25,6 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundAddEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundEntityPositionSyncPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundRemoveEntitiesPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;
 
@@ -35,14 +34,17 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static io.mikaple.Main.*;
+import static io.mikaple.Settings.debug;
+import static io.mikaple.commands.AttackCommand.attackCommand;
 import static io.mikaple.commands.BotCommand.*;
 import static io.mikaple.commands.CmdCommand.cmdCommand;
 import static io.mikaple.commands.HelpCommand.helpCommand;
 import static io.mikaple.commands.InteractCommand.interactCommand;
-import static io.mikaple.commands.MidiCommand.midiCommand;
+import static io.mikaple.commands.MusicCommand.musicCommand;
 import static io.mikaple.commands.PingServerCommand.pingCommand;
 import static io.mikaple.commands.RespawnCommand.respawnCommand;
 import static io.mikaple.commands.SendCommand.sendCommand;
+import static io.mikaple.commands.SettingsCommand.settingsCommand;
 import static io.mikaple.commands.WhoamiCommand.whoamiCommand;
 import static io.mikaple.utils.LogUtils.log;
 
@@ -155,7 +157,7 @@ public class ClientBuilder {
 
     public static ClientSession createBot(String name) {
         return ClientNetworkSessionFactory.factory()
-                .setAddress("mc.weeaxe.cn")
+                .setAddress(Settings.serverAddress)
                 .setProtocol(new MinecraftProtocol(name))
                 .create();
     }
@@ -173,11 +175,13 @@ public class ClientBuilder {
         CommandManager.register(sendCommand);
         CommandManager.register(cmdCommand);
         CommandManager.register(respawnCommand);
-        CommandManager.register(midiCommand);
+        CommandManager.register(musicCommand);
         CommandManager.register(whoamiCommand);
         CommandManager.register(pingCommand);
         CommandManager.register(botCommand);
         CommandManager.register(interactCommand);
+        CommandManager.register(attackCommand);
+        CommandManager.register(settingsCommand);
         registered = true;
     }
 }
