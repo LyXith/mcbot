@@ -22,7 +22,7 @@ public class Main {
     public static List<EntityData> entities = new CopyOnWriteArrayList<>();
     public static Map<UUID, GameProfile> profileMap = new ConcurrentHashMap<>();
     public static boolean mainConnected = false;
-    public static int waitingTime = 3:
+    public static int waitingTime = 3;
     static void main() {
         if (!logFolder.exists()) {
             logFolder.mkdir();
