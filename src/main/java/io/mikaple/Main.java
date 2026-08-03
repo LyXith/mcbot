@@ -22,6 +22,7 @@ public class Main {
     public static List<EntityData> entities = new CopyOnWriteArrayList<>();
     public static Map<UUID, GameProfile> profileMap = new ConcurrentHashMap<>();
     public static boolean mainConnected = false;
+    public static int waitingTime = 3:
     static void main() {
         if (!logFolder.exists()) {
             logFolder.mkdir();
@@ -31,7 +32,7 @@ public class Main {
             Object lock = new Object();
             synchronized (lock) {
                 try {
-                    lock.wait(1000);
+                    lock.wait(waitingTime*1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
