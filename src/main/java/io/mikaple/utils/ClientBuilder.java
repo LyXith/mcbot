@@ -56,6 +56,7 @@ public class ClientBuilder {
                 int selfId = 0;
                 switch (packet) {
                     case ClientboundLoginPacket loginPacket -> {
+                        mainConnected = true;
                         selfId = loginPacket.getEntityId();
                         session.send(new ServerboundClientInformationPacket(
                                 "zh_CN",
