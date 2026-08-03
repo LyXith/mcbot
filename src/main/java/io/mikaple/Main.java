@@ -21,12 +21,13 @@ public class Main {
     public static boolean registered = false;
     public static List<EntityData> entities = new CopyOnWriteArrayList<>();
     public static Map<UUID, GameProfile> profileMap = new ConcurrentHashMap<>();
+    public static boolean mainConnected = false;
     static void main() {
         if (!logFolder.exists()) {
             logFolder.mkdir();
         }
         while (true) {
-            ClientBuilder.createAndRun(name,password);
+            if (!mainConnected) ClientBuilder.createAndRun(name,password);
             Object lock = new Object();
             synchronized (lock) {
                 try {
@@ -35,6 +36,7 @@ public class Main {
                     e.printStackTrace();
                 }
             }
+            mainConnected = false;
             log.info("Bot stopped");
             logMessage("Bot stopped");
         }
