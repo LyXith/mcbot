@@ -36,19 +36,16 @@ jobs:
       with:
         gradle-version: '9.6.1'
 
-    - name: Build with Gradle Wrapper
-      run: gradle build
+    - name: Build fat jar with Shadow
+      run: gradle shadowJar
 
-    # Upload the build artifacts so they can be downloaded from the workflow run page.
+    # Upload the fat jar so it can be downloaded from the workflow run page.
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
-        path: |
-          build/libs/
-          build/reports/
-          build/distributions/
-        if-no-files-found: warn
+        path: build/libs/*-all.jar
+        if-no-files-found: error
         retention-days: 7
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
