@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.gradleup.shadow") version "9.0.0"
 }
 
 group = "io.mikaple"
@@ -24,4 +25,16 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+// ===== Shadow (fat jar) 配置 =====
+tasks.shadowJar {
+    archiveBaseName.set("mcbot")
+    archiveVersion.set("")
+    archiveClassifier.set("all")
+    manifest {
+        attributes["Main-Class"] = "io.mikaple.Main"
+    }
+    // 合并 META-INF 服务文件，避免 NoSuchMethodError
+    mergeServiceFiles()
 }
