@@ -37,7 +37,7 @@ jobs:
         gradle-version: '9.6.1'
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build
+      run: gradle build
 
     # Upload the build artifacts so they can be downloaded from the workflow run page.
     - name: Upload build artifacts
